@@ -16,7 +16,7 @@ import numpy as np
 CONTEXT_LENGTH = 100
 CAPTION_VOCAB_SIZE = 40000
 HASHTAG_VOCAB_SIZE = 60000
-DATA_ROOT_PATH = os.path.join('..', '..', 'data', 'instagram')
+DATA_ROOT_PATH = os.path.join('..', '..', 'data', 'Instagram')
 
 # For dataset
 CAPTION_TRAIN_JSON_FNAME = os.path.join(

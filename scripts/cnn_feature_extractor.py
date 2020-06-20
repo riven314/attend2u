@@ -22,19 +22,19 @@ tf.app.flags.DEFINE_string(
 )
 tf.app.flags.DEFINE_string(
     "image_dir",
-    "../data/images/",
+    "../../data/Instagram/images/",
     ""
 )
 tf.app.flags.DEFINE_string(
     "input_fname",
-    "../data/caption_dataset/train.txt",
+    "../../data/Instagram/caption_dataset/train.txt",
     ""
 )
 tf.app.flags.DEFINE_integer("batch_size", 32, "Batch size to use")
 tf.app.flags.DEFINE_string("gpu_id", "0", "GPU id to use")
 tf.app.flags.DEFINE_string(
     "output_dir",
-    "../data/resnet_pool5_features/",
+    "../../data/Instagram/resnet_pool5_features/",
     "Output directory to save resnet features"
 )
 
@@ -122,12 +122,12 @@ def main(_):
         threads = tf.train.start_queue_runners(coord=coord)
         try:
           for step in tqdm(
-              xrange(len(filenames) / FLAGS.batch_size + 1), ncols=70
+              range(len(filenames) / FLAGS.batch_size + 1), ncols=70
           ):
             if coord.should_stop():
               break
             file_names, pool5_value = sess.run([keys, pool5])
-            for i in xrange(len(file_names)):
+            for i in range(len(file_names)):
               np.save(
                   os.path.join(
                       FLAGS.output_dir,
@@ -136,7 +136,7 @@ def main(_):
                   pool5_value[i].astype(np.float32)
               )
         except tf.errors.OutOfRangeError:
-          print "Done feature extraction -- epoch limit reached"
+          print("Done feature extraction -- epoch limit reached")
         finally:
           coord.request_stop()
 
