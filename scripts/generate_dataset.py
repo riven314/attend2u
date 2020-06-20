@@ -16,7 +16,7 @@ import numpy as np
 CONTEXT_LENGTH = 100
 CAPTION_VOCAB_SIZE = 40000
 HASHTAG_VOCAB_SIZE = 60000
-DATA_ROOT_PATH = '../data'
+DATA_ROOT_PATH = os.path.join('..', '..', 'data', 'instagram')
 
 # For dataset
 CAPTION_TRAIN_JSON_FNAME = os.path.join(
@@ -64,7 +64,7 @@ UNK_ID = 3
 try:
   # UCS-4
   EMOTICON = re.compile(u'(([\U00002600-\U000027BF])|([\U0001f300-\U0001f64F])|([\U0001f680-\U0001f6FF]))')
-except Exception, e:
+except:
   # UCS-2
   EMOTICON = re.compile(u'(([\u2600-\u27BF])|([\uD83C][\uDF00-\uDFFF])|([\uD83D][\uDC00-\uDE4F])|([\uD83D][\uDE80-\uDEFF]))')
 NOT_EMOTICON = re.compile(r'(\\U([0-9A-Fa-f]){8})|(\\u([0-9A-Fa-f]){4})')
@@ -89,6 +89,8 @@ def tokenize(sentence):
   """Tokenize a sentence"""
   if isinstance(sentence, list):
     sentence = ' '.join(sentence)
+  if isinstance(sentence, bytes):
+    sentence = sentence.decode('ISO-8859-1')
 
   sentence = sentence.replace('#', ' #')
   sentence = sentence.replace('@', ' @')
@@ -96,8 +98,8 @@ def tokenize(sentence):
   sentence = sentence.lower()
   sentence = re.sub(r'@[a-zA-Z0-9._]+', '@username', sentence)  # change username
   sentence = EMOTICON.sub(r'@@byeongchang\1 ', sentence)
-  sentence = sentence.encode('unicode-escape')  # for emoticons
   sentence = re.sub(r'@@byeongchang\\', '@@byeongchang', sentence)
+  #sentence = sentence.encode('unicode-escape')  # for emoticons
   sentence = NOT_EMOTICON.sub(r' ', sentence)
   sentence = re.sub(r"[\-_]", r"-", sentence)  # incoporate - and _
   sentence = re.sub(r"([!?,\.\"])", r" ", sentence)  # remove duplicates on . , ! ?
@@ -228,12 +230,14 @@ def save_data(train_data, test1_data, test2_data, output_path, rev_vocab):
       context_tokenids = map(
           str, [rev_vocab.get(token, UNK_ID) for token in all_tfidf[user_id]]
       )
+      context_tokenids = [i for i in context_tokenids]
       context_length = str(len(context_tokenids))
       context_string = '_'.join(context_tokenids)
       for post_id, tokens in posts.items():
         caption_tokenids = map(
             str, [rev_vocab.get(token, UNK_ID) for token in tokens]
         )
+        caption_tokenids = [i for i in caption_tokenids]
         caption_length = str(len(caption_tokenids))
         caption_string = '_'.join(caption_tokenids)
         numpy_string = '%s_@_%s.npy' % (user_id, post_id)
@@ -267,7 +271,7 @@ def main():
       filename=None,
       level=logging.INFO,
       format="%(log_color)s[%(levelname)s:%(asctime)s]%(reset)s %(message)s",
-      datafmt="%Y-%m-%d %H:%M:%S"
+      datefmt="%Y-%m-%d %H:%M:%S"
   )
 
   if not os.path.exists(CAPTION_OUTPUT_PATH):
