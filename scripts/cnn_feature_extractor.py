@@ -35,7 +35,8 @@ tf.app.flags.DEFINE_integer("batch_size", 32, "Batch size to use")
 tf.app.flags.DEFINE_string("gpu_id", "0", "GPU id to use")
 tf.app.flags.DEFINE_string(
     "output_dir",
-    "../../data/Instagram/resnet_pool5_features/",
+    #"../../data/Instagram/resnet_pool5_features/",
+    os.path.join('..', 'cleansing', 'outputs'),
     "Output directory to save resnet features"
 )
 
@@ -85,7 +86,7 @@ def main(_):
     tf.gfile.MakeDirs(FLAGS.output_dir)
 
   with tf.Graph().as_default() as g:
-    filenames = [os.path.join(FLAGS.image_dir, fn) for fn in os.listdir(FLAGS.image_dir)[:30]]
+    filenames = [os.path.join(FLAGS.image_dir, fn) for fn in os.listdir(FLAGS.image_dir)]
     # filenames = [
     #     os.path.join(FLAGS.image_dir, name) for name in filenames \
     #         if not os.path.exists(os.path.join(FLAGS.output_dir, name + '.npy'))
@@ -93,8 +94,10 @@ def main(_):
 
     filename_queue = tf.train.string_input_producer(filenames)
     reader = tf.WholeFileReader()
+
     key, value = reader.read(filename_queue)
-    image = tf.image.decode_jpeg(value, channels=3)
+    #image = decode_image(value, channels = 3)
+    image = tf.image.decode_jpeg(value, channels=3) # pre-clean your images before run
     image_size = resnet_v1.resnet_v1.default_image_size
     processed_image = vgg_preprocessing.preprocess_image(
         image, image_size, image_size, is_training=False
@@ -129,24 +132,25 @@ def main(_):
             if coord.should_stop():
               break
             file_names, pool5_value = sess.run([keys, pool5])
-            # for i in range(len(file_names)):
-            #   np.save(
-            #       os.path.join(
-            #           FLAGS.output_dir,
-            #           os.path.basename(file_names[i]) + '.npy'
-            #       ),
-            #       pool5_value[i].astype(np.float32)
-            #   )
-            outs[step] = {'filenames': file_names, 'output': pool5_value}
+            for i in range(len(file_names)):
+              fn = os.path.basename(file_names[i].decode('utf-8')) + '.npy'
+              np.save(
+                os.path.join(FLAGS.output_dir, fn),
+                pool5_value[i].astype(np.float32)
+              )
+              print(f'{fn} written')
+            #outs[step] = {'filenames': file_names, 'output': pool5_value}
 
         except tf.errors.OutOfRangeError:
           print("Done feature extraction -- epoch limit reached")
         finally:
           coord.request_stop()
         coord.join(threads)
+
+  outs = None
   return outs
 
 
 if __name__ == "__main__":
 #     tf.app.run()
-  outs = smain(1)
+  outs = main(1)

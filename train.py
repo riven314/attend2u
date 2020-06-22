@@ -12,7 +12,7 @@ import numpy as np
 import os
 flags = tf.app.flags
 
-flags.DEFINE_integer("num_gpus", 4, "Number of gpus to use")
+flags.DEFINE_integer("num_gpus", 1, "Number of gpus to use")
 flags.DEFINE_string('train_dir', './checkpoints',
                            """Directory where to write event logs """
                            """and checkpoint.""")
@@ -115,7 +115,7 @@ def train():
       # Calculate the gradients for each model tower.
       tower_grads = []
       with tf.variable_scope(tf.get_variable_scope()) as scope:
-        for i in xrange(FLAGS.num_gpus):
+        for i in range(FLAGS.num_gpus):
           with tf.device('/gpu:%d' % i):
             with tf.name_scope('%s_%d' % (TOWER_NAME, i)) as scope:
               # Calculate the loss for one tower of the CIFAR model. This function
@@ -176,7 +176,7 @@ def train():
       tf.train.start_queue_runners(sess=sess)
       summary_writer = tf.summary.FileWriter(FLAGS.train_dir, sess.graph)
 
-      for step in xrange(FLAGS.max_steps):
+      for step in range(FLAGS.max_steps):
         start_time = time.time()
         _, loss_value = sess.run([apply_gradient_op, loss])
         duration = time.time() - start_time

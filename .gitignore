@@ -2,6 +2,7 @@ scripts/resnet_v1_101*
 *.json
 */*.json
 cleansing/images
+cleansing/outputs
 
 __pycache__
 */__pycache__
