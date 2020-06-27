@@ -46,7 +46,7 @@ def _load_vocabulary(vocab_fname):
 
 def _inject_summary(key_value):
     summary = tf.Summary()
-    for key, value in key_value.iteritems():
+    for key, value in key_value.items():
       summary.value.add(tag='%s' % (key), simple_value=value)
     return summary
 

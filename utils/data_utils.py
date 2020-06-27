@@ -10,13 +10,21 @@ import numpy as np
 import random
 from scripts.generate_dataset import GO_ID, EOS_ID
 flags = tf.app.flags
+
+
 # Basic model parameters.
+DATA_DIR = os.path.join('..', 'data', 'instagram', 'caption_dataset')
+FEATURE_DIR = os.path.join('cleansing', 'outputs')
+root_path = "/"
+train_fpath = 'trial.txt'
+val_fpath = 'trial.txt'
+
 flags.DEFINE_string("data_dir",
-    "./data/caption_dataset",
+    DATA_DIR, 
     "data directory [data]"
 )
 flags.DEFINE_string("img_data_dir",
-    "./data/resnet_pool5_features",
+    FEATURE_DIR,
     "data directory [data]"
 )
 
@@ -42,18 +50,7 @@ flags.DEFINE_integer('num_channels', 300,
     """Number of channels of memory cnn."""
 )
 
-
-
-
-
-
-
 FLAGS = flags.FLAGS
-
-
-root_path = "/"
-train_fpath = 'train.txt'
-val_fpath = 'test1.txt'
 
 
 def _generate_data_and_label_batch(inputs, min_queue_examples,
@@ -87,20 +84,22 @@ def _generate_data_and_label_batch(inputs, min_queue_examples,
 def numpy_read_func(batch_path):
   np_list = []
   for i in range(len(batch_path)):
+    b_path = batch_path[i].decode('utf-8')
     np_list.append(
-        np.load(os.path.join(FLAGS.img_data_dir, batch_path[i]))
+        np.load(os.path.join(FLAGS.img_data_dir, b_path))
     )
   return np.array(np_list)
 
 def token_split_func(batch_token, max_length, cap=None):
   all_ids = np.zeros([FLAGS.batch_size, max_length], dtype=np.int32)
   for i in range(FLAGS.batch_size):
-    if "_" in batch_token[i]:
-      valid_ids = map(int, batch_token[i].split('_'))[:max_length]
-    elif len(batch_token[i]) == 0:
+    b_token = batch_token[i].decode('utf-8')
+    if "_" in b_token:
+      valid_ids = list(map(int, b_token.split('_')))[:max_length]
+    elif len(b_token) == 0:
       valid_ids = []
     else:
-      valid_ids = [int(batch_token[i])]
+      valid_ids = [int(b_token)]
     if cap:
       valid_ids = valid_ids[:max_length-1]
       if cap == 'caption' :

@@ -13,9 +13,9 @@ import os
 flags = tf.app.flags
 
 flags.DEFINE_integer("num_gpus", 1, "Number of gpus to use")
-flags.DEFINE_string('train_dir', './checkpoints',
-                           """Directory where to write event logs """
-                           """and checkpoint.""")
+flags.DEFINE_string('train_dir', 
+                    './checkpoints',
+                    """Directory where to write event logs and checkpoint.""")
 flags.DEFINE_float("init_lr", 0.001, "initial learning rate [0.01]")
 flags.DEFINE_float("max_grad_norm", 100, "clip gradients to this norm [100]")
 flags.DEFINE_integer("max_steps", 500000, "number of steps to use during training [500000]")

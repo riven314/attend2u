@@ -9,8 +9,8 @@ pp = pprint.PrettyPrinter().pprint
 
 class BaseConfig(object):
   def __init__(self, FLAGS):
-    attrs = FLAGS.__dict__['__flags']
-    for attr in attrs:
+    # ref: https://stackoverflow.com/questions/48837940/tensorflow-tf-flag-issue-flags-dict-flags-items/49869819
+    for attr in FLAGS:
       setattr(self, attr, getattr(FLAGS, attr))
 
   def save(self, name):
@@ -24,7 +24,8 @@ class BaseConfig(object):
     if os.path.exists(fname):
       with open(fname, 'r') as f:
         contents = json.load(f)
-      for key, value in contents.iteritems():
+        
+      for key, value in contents.items():
         setattr(self, key, value)
 
 

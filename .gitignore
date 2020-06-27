@@ -3,6 +3,7 @@ scripts/resnet_v1_101*
 */*.json
 cleansing/images
 cleansing/outputs
+checkpoints
 
 __pycache__
 */__pycache__
