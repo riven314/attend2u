@@ -190,7 +190,7 @@ def train():
           format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                         'sec/batch)')
           c_g_step = int(global_step.eval(session=sess))
-          print (format_str % (datetime.now(), c_g_step, loss_value,
+          print(format_str % (datetime.now(), c_g_step, loss_value,
                                examples_per_sec, sec_per_batch))
 
         if (step + 1)% 25 == 0:

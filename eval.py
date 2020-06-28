@@ -2,10 +2,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
-import tensorflow as tf
-import colorlog
+import os
 import time
+
+import colorlog
+import tensorflow as tf
+
 from utils.data_utils import enqueue
 from utils.configuration import ModelConfig
 from model.model import CSMN
@@ -14,21 +16,26 @@ from utils.evaluator import Evaluator
 from termcolor import colored
 flags = tf.app.flags
 
-flags.DEFINE_string('eval_dir', './checkpoints/eval',
-                           """Directory where to write event logs.""")
-flags.DEFINE_string('eval_data', 'test',
-                           """Either 'test' or 'train_eval'.""")
-flags.DEFINE_string("train_dir", "./checkpoints", "checkpoint directory [checkpoints]")
-flags.DEFINE_string(
-    "vocab_fname",
-    "./data/caption_dataset/40000.vocab",
-    "Vocabulary file for evaluation"
-)
-flags.DEFINE_integer("num_gpus", 4, "Number of gpus to use")
+
+EVAL_DATA = 'train_eval'
+EVAL_DIR = os.path.join('checkpoints', 'eval')
+TRAIN_DIR = os.path.join('checkpoints')
+VOCAB_DIR = os.path.join('..', 'data', 'instagram', 'caption_dataset', '40000.vocab')
+
+
+flags.DEFINE_string('eval_dir', EVAL_DIR,
+                    """Directory where to write event logs.""")
+flags.DEFINE_string('eval_data', EVAL_DATA,
+                     """Either 'test' or 'train_eval'.""")
+flags.DEFINE_string("train_dir", TRAIN_DIR, 
+                    "checkpoint directory [checkpoints]")
+flags.DEFINE_string("vocab_fname", VOCAB_DIR,
+                    "Vocabulary file for evaluation")
+flags.DEFINE_integer("num_gpus", 1, "Number of gpus to use")
 flags.DEFINE_integer('eval_interval_secs', 60 * 1,
-                            """How often to run the eval.""")
-flags.DEFINE_boolean('run_once', False,
-                         """Whether to run eval only once.""")
+                     """How often to run the eval.""")
+flags.DEFINE_boolean('run_once', True,
+                     """Whether to run eval only once.""")
 TOWER_NAME = 'tower'
 
 
@@ -95,15 +102,15 @@ def _eval_once(saver, summary_writer, argmaxs, answer_ids, vocab, rev_vocab,
         answer_list += answer
         step += 1
 
-      for i in xrange(len(desc_list)):
+      for i in range(len(desc_list)):
         desc = []
         answer = []
-        for k in xrange(len(desc_list[i])):
+        for k in range(len(desc_list[i])):
           token_id = desc_list[i][k]
           if token_id == EOS_ID:
             break
           desc.append(rev_vocab[token_id])
-        for k in xrange(len(answer_list[i])):
+        for k in range(len(answer_list[i])):
           token_id = answer_list[i][k]
           if token_id == EOS_ID:
             break
@@ -133,7 +140,7 @@ def _eval_once(saver, summary_writer, argmaxs, answer_ids, vocab, rev_vocab,
       coord.request_stop(e)
 
     coord.request_stop()
-    coord.join(threads, stop_grace_period_secs=10)
+    coord.join(threads, stop_grace_period_secs = 10)
   return global_step
 
 
@@ -152,7 +159,7 @@ def evaluate():
     tower_argmax = []
     # Calculate the gradients for each model tower.
     with tf.variable_scope(tf.get_variable_scope()) as scope:
-      for i in xrange(FLAGS.num_gpus):
+      for i in range(FLAGS.num_gpus):
         with tf.device('/gpu:%d' % i):
           with tf.name_scope('%s_%d' % (TOWER_NAME, i)) as scope:
             inputs = [

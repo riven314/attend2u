@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import os
 
-from six.moves import xrange  # pylint: disable=redefined-builtin
+from six.moves import range  # pylint: disable=redefined-builtin
 import tensorflow as tf
 import numpy as np
 import random
@@ -185,7 +185,7 @@ def read_numpy_format_and_label(filename_queue):
 def chunks(data, batch_size):
   chunk_l = []
   N = int(len(data)/batch_size)
-  for i in xrange(N):
+  for i in range(N):
     chunk_l.append(data[i*batch_size:(i+1)*batch_size])
   chunk_l.append(data[(i+1)*batch_size:])
   return chunk_l
@@ -196,8 +196,8 @@ def mergers(chunk_l):
     for data in datas:
       newdata.append(data)
   return newdata
-def enqueue(eval_data):
 
+def enqueue(eval_data):
   # string input format
   # numpyfname,contextlength,captionlength,contexttoken1_contexttoken2,wordtoken1_wordtoken2
   # e.g. 12345.npy,4,3,445_24_445_232,134_466_234
