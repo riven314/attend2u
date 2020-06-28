@@ -13,6 +13,7 @@ sequence_loss = tf.contrib.legacy_seq2seq.sequence_loss
 layers = tf.contrib.layers
 arg_scope = tf.contrib.framework.arg_scope
 
+
 class CSMN(object):
   """Context Sequence Memory Network"""
   def _embedding_to_hidden(self, input2dim, size, scope='Wh', reuse = True):
@@ -26,7 +27,7 @@ class CSMN(object):
           layers.fully_connected(
               input2dim,
               reuse = reuse,
-              scope=scope
+              scope = scope
           ),
           [-1, size, self.mem_dim]
       )
@@ -385,6 +386,7 @@ class CSMN(object):
 
       h_pool = tf.concat(pooled_outputs, 3)
       h_pool_flat = tf.reshape(h_pool, [-1, self.num_channels_total])
+
       with arg_scope([layers.fully_connected],
               num_outputs = self.num_channels_total,
               activation_fn = tf.nn.relu,
@@ -452,6 +454,7 @@ class CSMN(object):
     self.om_s_a = loop_outputs[2]
     sequence_outputs = tf.transpose(sequence_outputs, perm=[1, 0, 2])
     sequence_outputs = tf.reshape(sequence_outputs, [-1, self.num_channels_total])
+
     final_outputs = tf.matmul(sequence_outputs, self.Wf) + self.bf
     prob = tf.nn.softmax(final_outputs)
     self.prob = tf.reshape(prob, [self.batch_size, -1, self.vocab_size])

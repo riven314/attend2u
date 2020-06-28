@@ -172,6 +172,8 @@ def evaluate():
                 tower_context_mask[i],
                 tower_caption_mask[i]
             ]
+
+            # inference mode using tf.argmax
             net = CSMN(inputs, ModelConfig(FLAGS), is_training= False)
             argmax = net.argmax
             # Reuse variables for the next tower.

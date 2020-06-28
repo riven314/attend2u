@@ -28,8 +28,10 @@ LEARNING_RATE_DECAY_FACTOR = 0.8  # Learning rate decay factor.
 TOWER_NAME = 'tower'
 
 def _tower_loss(inputs, scope):
+  # training mode
   net = CSMN(inputs, ModelConfig(FLAGS))
   loss = net.loss
+  
   tf.summary.scalar(scope+'loss', loss)
   return loss
 
