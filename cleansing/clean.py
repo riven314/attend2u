@@ -20,6 +20,16 @@ with open(REF_JSON_PATH, 'r') as f:
     ref_json_data = json.load(f)
 
 
+def read_vocab(vocab_path):
+  with open(vocab_path, 'r') as f:
+    vocab = f.readlines()
+  vocab = [s.strip() for s in vocab]
+  rev_vocab = {}
+  for i, token in enumerate(vocab):
+    rev_vocab[i] = token
+  return vocab, rev_vocab    
+
+
 def read_txt(path):
     with open(path, 'r') as f:
         obj = f.read().splitlines()
@@ -27,14 +37,14 @@ def read_txt(path):
 
 
 def decode_one_sample(sample, vocab):
-    fn, _, _, token_seq = sample.split(',')
+    fn, _, _, vocabs, token_seq = sample.split(',')
     fn = fn[:-4]
     token_seq = [int(i) for i in token_seq.split('_')]
     word_seq = [vocab[i] for i in token_seq]
     return fn, token_seq, word_seq
 
 
-def populate_metadata_in_json(data, metadata, data_type = 'test', limit = None):
+def populate_metadata_in_json(data, metadata, vocab, data_type = 'test', limit = None):
     # 'val', 'test', 'train'
     assert data_type in ['train', 'val', 'test']
 
@@ -61,16 +71,18 @@ def populate_metadata_in_json(data, metadata, data_type = 'test', limit = None):
     return metadata
 
 
-vocab = read_txt(VOCAB_PATH)
-outs = dict()
-outs['dataset'] = 'flickr8k'
-outs['images'] = []
+def write_json(obj, path):
+    with open(path, 'w') as f:
+        json.dump(obj, f, indent = 2)
 
-for data_file, data_type in [('test1', 'val'), ('test2', 'test'), ('train', 'train')]:
+if __name__ == '__main__':
+    vocab = read_txt(VOCAB_PATH)
+    outs = dict()
+    outs['dataset'] = 'flickr8k'
+    outs['images'] = []
+
+    #for data_file, data_type in [('test1', 'val'), ('test2', 'test'), ('train', 'train')]:
+    data_file = 'test1'
     data_path = os.path.join(DATA_DIR, f'{data_file}.txt')
     data = read_txt(data_path)
-    outs = populate_metadata_in_json(data, outs, data_type = data_type, limit = None)
-
-
-with open('dataset_instagram.json', 'w') as f:
-    json.dump(outs, f, indent = 2)
+    outs = populate_metadata_in_json(data, outs, vocab, data_type = 'test', limit = None)
