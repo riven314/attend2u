@@ -53,7 +53,7 @@ class Evaluator(object):
           {'caption': predict_cap, 'id': i, 'image_id': i}
       )
 
-    with nostdout():
+    with nostdout():      
       coco = COCO(ann)
       coco_res = coco.loadRes(coco_res)
       coco_eval = COCOEvalCap(coco, coco_res)
