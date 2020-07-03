@@ -20,15 +20,14 @@ tf.app.flags.DEFINE_string(
     os.path.join('resnet_v1_101.ckpt'),
     "Resnet checkpoint to use"
 )
-
 tf.app.flags.DEFINE_string(
     "image_dir",
-    os.path.join('..', 'cleansing', 'images'),
+    os.path.join('..', '..', 'data', 'instagram', 'images'),
     ""
 )
 tf.app.flags.DEFINE_string(
     "input_fname",
-    "../../data/Instagram/caption_dataset/train.txt",
+    "../../data/instagram/caption_dataset/train.txt",
     ""
 )
 tf.app.flags.DEFINE_integer("batch_size", 32, "Batch size to use")
@@ -36,7 +35,7 @@ tf.app.flags.DEFINE_string("gpu_id", "0", "GPU id to use")
 tf.app.flags.DEFINE_string(
     "output_dir",
     #"../../data/Instagram/resnet_pool5_features/",
-    os.path.join('..', 'cleansing', 'outputs'),
+    os.path.join('..', 'features'),
     "Output directory to save resnet features"
 )
 
