@@ -6,7 +6,7 @@ import os
 from clean import DATA_DIR, read_txt
 
 FEATURE_DIR = '../features'
-TXT_PATH = os.path.join(DATA_DIR, 'train.txt')
+TXT_PATH = os.path.join(DATA_DIR, 'traingi.txt')
 
 avai_npy_files = os.listdir(FEATURE_DIR)
 avai_npy_files = set(avai_npy_files)
