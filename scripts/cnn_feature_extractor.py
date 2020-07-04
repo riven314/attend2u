@@ -35,7 +35,8 @@ tf.app.flags.DEFINE_string("gpu_id", "0", "GPU id to use")
 tf.app.flags.DEFINE_string(
     "output_dir",
     #"../../data/Instagram/resnet_pool5_features/",
-    os.path.join('..', 'features'),
+    #os.path.join('..', 'features'),
+    '/home/alex/Desktop/features',
     "Output directory to save resnet features"
 )
 

@@ -80,7 +80,7 @@ def train():
         filename=None,
         level=logging.INFO,
         format="%(log_color)s[%(levelname)s:%(asctime)s]%(reset)s %(message)s",
-        datafmt="%Y-%m-%d %H:%M:%S"
+        datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.95)

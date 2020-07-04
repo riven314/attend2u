@@ -293,7 +293,7 @@ def main():
       filename=None,
       level=logging.INFO,
       format="%(log_color)s[%(levelname)s:%(asctime)s]%(reset)s %(message)s",
-      datafmt="%Y-%m-%d %H:%M:%S"
+      datefmt="%Y-%m-%d %H:%M:%S"
   )
 
   if not os.path.exists(CAPTION_OUTPUT_PATH):

@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-REF_JSON_PATH = r'D:\personal\Project\MadeWithML_Incubator\a-PyTorch-Tutorial-to-Image-Captioning\data\caption_datasets\dataset_flickr8k.json'
+REF_JSON_PATH = '/media/alex/Data/personal/Project/MadeWithML_Incubator/a-PyTorch-Tutorial-to-Image-Captioning/data/caption_datasets/dataset_flickr8k.json'
 
 ROOT = os.path.join('..', '..', 'data', 'instagram')
 DATA_DIR = os.path.join(ROOT, 'caption_dataset')
@@ -18,6 +18,15 @@ OUT_DIR = os.path.join(os.getcwd(), 'images')
 os.makedirs(OUT_DIR, exist_ok = True)
 with open(REF_JSON_PATH, 'r') as f:
     ref_json_data = json.load(f)
+
+
+def read_npy_from_txt(txt_path):
+    data = read_txt(txt_path)
+    outs = []
+    for sample in data:
+        npy_path, _, _, _, _ = sample.split(',')
+        outs.append(npy_path)
+    return outs
 
 
 def read_vocab(vocab_path):
