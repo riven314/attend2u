@@ -13,17 +13,12 @@ from tensorflow.python.ops import string_ops
 from tensorflow.contrib.slim.python.slim.nets import resnet_v1
 
 import vgg_preprocessing
-from cnn_feature_extractor import decode_image
+from utils import read_target_imgs
 
 
 slim = tf.contrib.slim
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string(
-    "checkpoint_dir",
-    os.path.join('resnet_v1_101.ckpt'),
-    "Resnet checkpoint to use"
-)
 tf.app.flags.DEFINE_string(
     "image_dir",
     os.path.join('..', '..', 'data', 'Instagram', 'images'),
@@ -43,6 +38,22 @@ tf.app.flags.DEFINE_string(
 )
 
 
+def decode_image(contents, channels = None, name = None):
+  with ops.name_scope(name, 'decode_image'):
+    if channels not in (None, 0, 1, 3):
+      raise ValueError('channels must be in (None, 0, 1, 3)')
+    substr = string_ops.substr(contents, 0, 4)
+    
+    def _png():
+      return gen_image_ops.decode_png(contents, channels)
+    
+    def _jpeg():
+      return gen_image_ops.decode_jpeg(contents, channels)
+
+    is_png = math_ops.equal(substr, b'\211PNG', name = 'is_png')
+    return control_flow_ops.cond(is_png, _png, _jpeg, name = 'cond_jpeg')
+
+
 if __name__ == '__main__':
   outs = dict()
   os.environ["CUDA_VISIBLE_DEVICES"] = FLAGS.gpu_id
@@ -50,15 +61,20 @@ if __name__ == '__main__':
   if not tf.gfile.Exists(FLAGS.output_dir):
     tf.gfile.MakeDirs(FLAGS.output_dir)
 
+  filenames = read_target_imgs(FLAGS.input_fname)
+  filenames = [os.path.join(FLAGS.image_dir, fn) for fn in filenames]  
+  print(f'total image files: {len(filenames)}')
+
   with tf.Graph().as_default() as g:
-    filenames = [os.path.join(FLAGS.image_dir, fn) for fn in os.listdir(FLAGS.image_dir)]
     filename_queue = tf.train.string_input_producer(filenames)
     reader = tf.WholeFileReader()
 
+    # embed print node into computation graph
     key, value = reader.read(filename_queue)
-    print(f'key = {key}')
-    #image = decode_image(value, channels = 3)
-    image = tf.image.decode_jpeg(value, channels=3) # pre-clean your images before run
+    #print_value = tf.print(value, [value])
+
+    image = decode_image(value, channels = 3)
+    #image = tf.image.decode_jpeg(value, channels = 3) # pre-clean your images before run
     image_size = resnet_v1.resnet_v1.default_image_size
     processed_image = vgg_preprocessing.preprocess_image(
         image, image_size, image_size, is_training=False
@@ -73,10 +89,13 @@ if __name__ == '__main__':
     with tf.Session() as sess:
       coord = tf.train.Coordinator()
       threads = tf.train.start_queue_runners(coord=coord)
-    for step in tqdm(
+      for step in tqdm(
         range(int(len(filenames) / FLAGS.batch_size) + 1), 
         ncols = 70
-    ):
-      if coord.should_stop():
-        break
-      file_names = sess.run([keys])
+      ):
+        if coord.should_stop():
+          break
+
+        print_val = sess.run(key).decode()
+        print(print_val)
+        file_names = sess.run([keys])

@@ -1,5 +1,8 @@
 import os
 
+import numpy as np
+from tqdm import tqdm
+
 import tensorflow as tf
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import math_ops
@@ -7,9 +10,9 @@ from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import gen_image_ops
 from tensorflow.python.ops import string_ops
 from tensorflow.contrib.slim.python.slim.nets import resnet_v1
+
 import vgg_preprocessing
-import numpy as np
-from tqdm import tqdm
+from utils import read_target_imgs
 
 
 slim = tf.contrib.slim
@@ -85,19 +88,19 @@ def main(_):
   if not tf.gfile.Exists(FLAGS.output_dir):
     tf.gfile.MakeDirs(FLAGS.output_dir)
 
-  with tf.Graph().as_default() as g:
-    filenames = [os.path.join(FLAGS.image_dir, fn) for fn in os.listdir(FLAGS.image_dir)]
-    # filenames = [
-    #     os.path.join(FLAGS.image_dir, name) for name in filenames \
-    #         if not os.path.exists(os.path.join(FLAGS.output_dir, name + '.npy'))
-    # ]
+  filenames = read_target_imgs(FLAGS.input_fname)
+  filenames = [os.path.join(FLAGS.image_dir, fn) for fn in filenames]
+  print(f'total image files: {len(filenames)}')
 
+  with tf.Graph().as_default() as g:
     filename_queue = tf.train.string_input_producer(filenames)
     reader = tf.WholeFileReader()
 
     key, value = reader.read(filename_queue)
-    #image = decode_image(value, channels = 3)
-    image = tf.image.decode_jpeg(value, channels=3) # pre-clean your images before run
+
+    image = decode_image(value, channels = 3)
+    #image = tf.image.decode_jpeg(value, channels=3) # pre-clean your images before run
+
     image_size = resnet_v1.resnet_v1.default_image_size
     processed_image = vgg_preprocessing.preprocess_image(
         image, image_size, image_size, is_training=False
@@ -152,5 +155,5 @@ def main(_):
 
 
 if __name__ == "__main__":
-#     tf.app.run()
+  #tf.app.run()
   outs = main(1)
