@@ -1,5 +1,6 @@
 import os
 
+from tqdm import tqdm
 from PIL import Image
 
 
@@ -47,7 +48,7 @@ def rm_missing_rows_from_txt(txt_path, new_txt_path):
     outs = read_txt(txt_path)
     
     error, valid_outs = 0, []
-    for sample in outs:
+    for sample in tqdm(outs):
         npy_fn, _, _, _, _ = sample
         img_path = os.path.join(IMG_DIR, npy_fn[:-4])
         try:
@@ -55,6 +56,7 @@ def rm_missing_rows_from_txt(txt_path, new_txt_path):
         except Exception as e:
             print(f'[{npy_fn} error: {e}')
             error += 1
+            continue
         valid_outs.append(sample)
 
     write_txt(valid_outs, new_txt_path)
@@ -65,7 +67,7 @@ def rm_missing_rows_from_txt(txt_path, new_txt_path):
 
 
 if __name__ == '__main__':
-    for data_type in ['train', 'test1', 'test2']:
+    for data_type in ['train']:
         txt_path = os.path.join(TXT_DIR, f'{data_type}.txt')
         new_txt_path = os.path.join(TXT_DIR, f'{data_type}_new.txt')
         rm_missing_rows_from_txt(txt_path, new_txt_path)
