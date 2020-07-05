@@ -10,3 +10,4 @@ __pycache__
 
 utils/pycocoevalcap/tokenizer/tmp*
 features
+features_incomplete
