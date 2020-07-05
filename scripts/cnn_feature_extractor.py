@@ -22,12 +22,12 @@ tf.app.flags.DEFINE_string(
 )
 tf.app.flags.DEFINE_string(
     "image_dir",
-    os.path.join('..', '..', 'data', 'instagram', 'images'),
+    os.path.join('..', '..', 'data', 'Instagram', 'images'),
     ""
 )
 tf.app.flags.DEFINE_string(
     "input_fname",
-    "../../data/instagram/caption_dataset/train.txt",
+    "../../data/Instagram/caption_dataset/train.txt",
     ""
 )
 tf.app.flags.DEFINE_integer("batch_size", 32, "Batch size to use")
@@ -36,7 +36,7 @@ tf.app.flags.DEFINE_string(
     "output_dir",
     #"../../data/Instagram/resnet_pool5_features/",
     #os.path.join('..', 'features'),
-    '/home/alex/Desktop/features',
+    '/userhome/34/h3509807/MadeWithML/data/Instagram/resnet_pool5_features',
     "Output directory to save resnet features"
 )
 
