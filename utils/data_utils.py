@@ -13,8 +13,8 @@ flags = tf.app.flags
 
 
 # Basic model parameters.
-DATA_DIR = os.path.join('..', 'data', 'instagram', 'caption_dataset')
-FEATURE_DIR = os.path.join('features')
+DATA_DIR = os.path.join('..', 'data', 'Instagram', 'caption_dataset')
+FEATURE_DIR = os.path.join('..', 'data', 'Instagram', 'resnet_pool5_features')
 root_path = "/"
 train_fpath = 'train.txt'
 val_fpath = 'test1.txt'
