@@ -21,6 +21,7 @@ EVAL_DATA = 'train_eval'
 EVAL_DIR = os.path.join('checkpoints', 'eval')
 TRAIN_DIR = os.path.join('checkpoints')
 VOCAB_DIR = os.path.join('..', 'data', 'instagram', 'caption_dataset', '40000.vocab')
+CKPT_PATH = 'checkpoints/model.ckpt-96000'
 
 
 flags.DEFINE_string('eval_dir', EVAL_DIR,
@@ -67,6 +68,9 @@ def _eval_once(saver, summary_writer, argmaxs, answer_ids, vocab, rev_vocab,
     ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
     if ckpt and ckpt.model_checkpoint_path:
       # Restores from checkpoint
+      ckpt.model_checkpoint_path = CKPT_PATH
+      print(f'ckpt: {ckpt.model_checkpoint_path}')
+
       saver.restore(sess, ckpt.model_checkpoint_path)
 
       # extract global_step from it.

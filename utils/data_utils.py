@@ -14,10 +14,10 @@ flags = tf.app.flags
 
 # Basic model parameters.
 DATA_DIR = os.path.join('..', 'data', 'instagram', 'caption_dataset')
-FEATURE_DIR = os.path.join('features')
+FEATURE_DIR = os.path.join('features_incomplete')
 root_path = "/"
 train_fpath = 'train.txt'
-val_fpath = 'test1.txt'
+val_fpath = 'trial.txt'
 
 flags.DEFINE_string("data_dir",
     DATA_DIR, 

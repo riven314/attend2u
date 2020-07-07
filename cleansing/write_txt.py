@@ -6,7 +6,7 @@ from PIL import Image
 
 IMG_DIR = '../../data/Instagram/images'
 TXT_DIR = os.path.join(IMG_DIR, '..', 'caption_dataset')
-assert os.path.isdir(IMG_DIR)
+#assert os.path.isdir(IMG_DIR)
 
 
 def read_txt(txt_path):
